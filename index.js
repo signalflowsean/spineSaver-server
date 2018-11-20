@@ -1,11 +1,51 @@
 'use strict'; 
 
-const express = require('express'); 
+const express = require('express');
+const bodyParser = require('body-parser'); 
+const cors = require('cors'); 
+const morgan = require('morgan'); 
+
+const { PORT, CLIENT_ORIGIN } = require('./config'); 
+
 const app = express(); 
+
+app.use(bodyParser.json());
+
+app.use(
+  morgan(process.env.NODE_ENV === 'production' ? 'common' : 'dev', { 
+    skip : (req, res) => process.env.NODE_ENV === 'test'
+  })
+); 
+
+app.use(
+  cors({
+    origin: CLIENT_ORIGIN
+  })
+); 
 
 app.get('/api/hi', (req, res) => { 
   res.send('hi'); 
 }); 
 
-app.listen(8080); 
+app.post('/api/slouchData', (req, res) => { 
+  const {slouchData} = req.body; 
+
+  res.json({slouchData}); 
+}); 
+
+function runServer(port = PORT) { 
+  const server = app
+    .listen(port, () => { 
+
+    });
+
+}
+
+if (require.main === module) { 
+  //dbConnect();
+  runServer(); 
+}
+
+
+//app.listen(8080); 
 
