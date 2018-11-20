@@ -36,8 +36,11 @@ app.post('/api/slouchData', (req, res) => {
 function runServer(port = PORT) { 
   const server = app
     .listen(port, () => { 
-
-    });
+      console.info(`App listening on port ${server.address().port}`); 
+    })
+    .on('error', err => { 
+      console.err('Express failed:', err); 
+    }); 
 
 }
 
