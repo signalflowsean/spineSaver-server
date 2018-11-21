@@ -5,6 +5,8 @@ const bodyParser = require('body-parser');
 const cors = require('cors'); 
 const morgan = require('morgan'); 
 const mongoose = require('mongoose'); 
+const passport = require('passport'); 
+const moment = require('moment'); 
 
 const { PORT, CLIENT_ORIGIN, DATABASE_URL } = require('./config'); 
 const Slouch = require('./models/slouch'); 
@@ -52,23 +54,33 @@ app.post('/api/slouchData', (req, res) => {
 
 app.get('/api/display', (req, res) => { 
 
- 
-  const thresh = 0.5;  
-  let timeElapsed, slouchElapsed; 
-  Slouch
-    .find()
-    .then(poseData => { 
-      //console.log(slouch.length); 
-      const slouchData = poseData[0].slouch.filter(pose => (pose > thresh)); 
-      timeElapsed = calculateTimeFromLength(poseData.length); 
-      slouchElapsed = calculateTimeFromLength(slouchData.length); 
-      const display = { 
-        timeElapsed, 
-        slouchElapsed, 
-        improvement : 18
-      }; 
-      res.json(display); 
-    });  
+  //const thresh = 0.5;  
+  let timeElapsed, slouchElapsed, improvement; 
+  let prevSlouch, presSlouch; 
+
+  let today = moment().startOf('day');  
+  
+  let tomorrow = moment(today).endOf('day'); 
+  
+  // Slouch
+  //   .find()
+  //   .then(poseData => { 
+  //     //console.log(slouch.length); 
+  //     console.log('poseData', poseData); 
+  //     const slouchData = calculateSlouchFromPose(poseData[0].slouch); 
+  //     //const slouchData = poseData[0].slouch.filter(pose => (pose > thresh)); 
+  //     timeElapsed = calculateTimeFromLength(poseData.length); 
+  //     slouchElapsed = calculateTimeFromLength(slouchData.length); 
+  //     return Slouch.find( {createdAt: {
+  //       $gte: today.toDate(),
+  //       $lt: tomorrow.toDate()
+  //     }})
+  //       .then((data) => { 
+  //         console.log('hi');
+  //       }); 
+      
+  //   });  
+  //res.json(display); 
     
 }); 
 function calculateTimeFromLength(length){ 
@@ -76,6 +88,11 @@ function calculateTimeFromLength(length){
   const frameRate = 50; 
 
   return ((length * frameRate * sampleSize)/60000).toFixed(2); 
+}
+
+function calculateSlouchFromPose(poseData){
+  const thresh = 0.5; 
+  return poseData.filter(pose => (pose > thresh)); 
 }
 
 function runServer(port = PORT) { 
