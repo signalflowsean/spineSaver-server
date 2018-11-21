@@ -42,7 +42,7 @@ app.post('/api/slouchData', (req, res) => {
       res.status(201);
 
       // eslint-disable-next-line no-console
-      console.log(slouch); 
+      //console.log(slouch); 
     })
     .catch(err => {
       // eslint-disable-next-line no-console 
@@ -51,11 +51,7 @@ app.post('/api/slouchData', (req, res) => {
 }); 
 
 app.get('/api/display', (req, res) => { 
-  // const display = { 
-  //   timeElapsed : 23,
-  //   slouchElapsed : 12, 
-  //   improvement : 18
-  // };
+
  
   const thresh = 0.5;  
   let timeElapsed, slouchElapsed; 
@@ -79,7 +75,7 @@ function calculateTimeFromLength(length){
   const sampleSize = 10; 
   const frameRate = 50; 
 
-  return (length * frameRate * sampleSize)/60000; 
+  return ((length * frameRate * sampleSize)/60000).toFixed(2); 
 }
 
 function runServer(port = PORT) { 
@@ -97,10 +93,13 @@ function runServer(port = PORT) {
 function dbConnect(url = DATABASE_URL) { 
   return mongoose.connect(url, { useNewUrlParser: true })
     .then(() => { 
+      // eslint-disable-next-line no-console
       console.log('Mongoose is connected'); 
     })
     .catch(err => { 
-      console.error('Mongoose failed to connect'); 
+      // eslint-disable-next-line no-console
+      console.error('Mongoose failed to connect');
+      // eslint-disable-next-line no-console 
       console.error(err); 
     }); 
 }
