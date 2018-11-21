@@ -35,13 +35,14 @@ app.post('/api/slouchData', (req, res) => {
   const {slouchData} = req.body; 
   res.json({slouchData}); 
   //console.log(Slouch); 
+
   Slouch
     .create({ slouch : slouchData })
     .then(slouch => { 
       res.status(201);
 
       // eslint-disable-next-line no-console
-      console.log(  ); 
+      console.log(slouch); 
     })
     .catch(err => {
       // eslint-disable-next-line no-console 
@@ -50,14 +51,36 @@ app.post('/api/slouchData', (req, res) => {
 }); 
 
 app.get('/api/display', (req, res) => { 
-  const display = { 
-    timeElapsed : 23,
-    slouchElapsed : 12, 
-    improvement : 18
-  }; 
-
-  res.json(display); 
+  // const display = { 
+  //   timeElapsed : 23,
+  //   slouchElapsed : 12, 
+  //   improvement : 18
+  // };
+ 
+  const thresh = 0.5;  
+  let timeElapsed, slouchElapsed; 
+  Slouch
+    .find()
+    .then(poseData => { 
+      //console.log(slouch.length); 
+      const slouchData = poseData[0].slouch.filter(pose => (pose > thresh)); 
+      timeElapsed = calculateTimeFromLength(poseData.length); 
+      slouchElapsed = calculateTimeFromLength(slouchData.length); 
+      const display = { 
+        timeElapsed, 
+        slouchElapsed, 
+        improvement : 18
+      }; 
+      res.json(display); 
+    });  
+    
 }); 
+function calculateTimeFromLength(length){ 
+  const sampleSize = 10; 
+  const frameRate = 50; 
+
+  return (length * frameRate * sampleSize)/60000; 
+}
 
 function runServer(port = PORT) { 
   const server = app
