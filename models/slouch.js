@@ -15,6 +15,4 @@ slouchSchema.set('toJSON', {
   }
 }); 
 
-const Slouch = mongoose.model('Slouch', slouchSchema); 
-
-module.exports = Slouch; 
+module.exports = mongoose.model('Slouch', slouchSchema); 

@@ -10,7 +10,7 @@ const router = express.Router();
 
 
 //TESTING ENDPOINT
-router.get('/api/hi', (req, res) => { 
+router.get('/hi', (req, res) => { 
   res.send('hi'); 
 }); 
 
