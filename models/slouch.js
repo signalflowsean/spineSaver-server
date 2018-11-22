@@ -3,7 +3,9 @@
 const mongoose = require('mongoose'); 
 
 const slouchSchema = mongoose.Schema({ 
-  slouch: {type: [Number], required: true}}, {timestamps: true}); 
+  slouch: {type: [Number], required: true}, 
+  created: {type: Date}
+}, {timestamps: true}); 
 
 slouchSchema.set('toJSON', { 
   virtuals: true, 

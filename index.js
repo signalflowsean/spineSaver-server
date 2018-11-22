@@ -36,15 +36,11 @@ app.get('/api/hi', (req, res) => {
 app.post('/api/slouchData', (req, res) => { 
   const {slouchData} = req.body; 
   res.json({slouchData}); 
-  //console.log(Slouch); 
 
   Slouch
-    .create({ slouch : slouchData })
+    .create({ slouch : slouchData, created : moment() })
     .then(slouch => { 
       res.status(201);
-
-      // eslint-disable-next-line no-console
-      //console.log(slouch); 
     })
     .catch(err => {
       // eslint-disable-next-line no-console 
@@ -52,47 +48,62 @@ app.post('/api/slouchData', (req, res) => {
     }); 
 }); 
 
-app.get('/api/display', (req, res) => { 
+app.get('/api/display', (req, res) => {  
+  let timeElapsed, slouchElapsed, improvement;  
 
-  //const thresh = 0.5;  
-  let timeElapsed, slouchElapsed, improvement; 
-  let prevSlouch, presSlouch; 
+  let prevTimeMin = moment().subtract(10, 'hours')._d; 
+  let prevTimeMax = moment().subtract(8, 'hours')._d; 
 
-  let today = moment().startOf('day');  
-  
-  let tomorrow = moment(today).endOf('day'); 
-  
-  // Slouch
-  //   .find()
-  //   .then(poseData => { 
-  //     //console.log(slouch.length); 
-  //     console.log('poseData', poseData); 
-  //     const slouchData = calculateSlouchFromPose(poseData[0].slouch); 
-  //     //const slouchData = poseData[0].slouch.filter(pose => (pose > thresh)); 
-  //     timeElapsed = calculateTimeFromLength(poseData.length); 
-  //     slouchElapsed = calculateTimeFromLength(slouchData.length); 
-  //     return Slouch.find( {createdAt: {
-  //       $gte: today.toDate(),
-  //       $lt: tomorrow.toDate()
-  //     }})
-  //       .then((data) => { 
-  //         console.log('hi');
-  //       }); 
+  let presTimeMin = moment().subtract(4, 'hours')._d; 
+  let presTimeMax = moment().subtract(0, 'hours')._d; 
+
+  Slouch
+    .find()
+    .then(poseData => {  
+      const prevTimePromise = Slouch.find( {created: {
+        $gte: prevTimeMin,
+        $lt: prevTimeMax
+      }});
       
-  //   });  
-  //res.json(display); 
-    
+      const presTimePromise = Slouch.find( { created : { 
+        $gte: presTimeMin, 
+        $lt: presTimeMax
+      }}); 
+
+      timeElapsed = toTime(poseData.length); 
+      slouchElapsed = getTimeSlouching(poseData);
+      
+      return Promise.all([prevTimePromise, presTimePromise]); 
+    })
+    .then(data => {  
+      const prevTime = getTimeSlouching(data[0]); 
+      const presTime = getTimeSlouching(data[1]); 
+      
+      improvement = (presTime/prevTime); 
+      
+      res.json({timeElapsed, slouchElapsed, improvement}); 
+    })
+    .catch(error => { 
+      console.log('Error: ', error); 
+    }); 
 }); 
-function calculateTimeFromLength(length){ 
+
+function toTime(length){ 
   const sampleSize = 10; 
   const frameRate = 50; 
-
-  return ((length * frameRate * sampleSize)/60000).toFixed(2); 
+  return ((length*frameRate*sampleSize)/60000).toFixed(2); 
 }
-
-function calculateSlouchFromPose(poseData){
+function getTimeSlouching (data){ 
+  const poseData = []; 
   const thresh = 0.5; 
-  return poseData.filter(pose => (pose > thresh)); 
+  
+  data.forEach((d) => d.slouch.forEach(p => poseData.push(p))); 
+  const slouchData = poseData.filter(pose => (pose > thresh)); 
+
+  //NOT * 10 broke out of array
+  const time = ((slouchData.length*50)/60000).toFixed(2); 
+
+  return time; 
 }
 
 function runServer(port = PORT) { 
