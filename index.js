@@ -84,6 +84,7 @@ app.get('/api/display', (req, res) => {
       res.json({timeElapsed, slouchElapsed, improvement}); 
     })
     .catch(error => { 
+      // eslint-disable-next-line no-console
       console.log('Error: ', error); 
     }); 
 }); 
