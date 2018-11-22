@@ -23,7 +23,7 @@ userSchema.methods.validatePassword = function (incomingPassword) {
   return bcrypt.compare(incomingPassword, user.password); 
 }; 
 
-userSchema.statics.hashPassord = function (incomingPassword) { 
+userSchema.statics.hashPassword = function (incomingPassword) { 
   return bcrypt.hash(incomingPassword, 10); 
 }; 
 
