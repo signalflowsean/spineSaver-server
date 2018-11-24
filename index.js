@@ -12,9 +12,10 @@ const { PORT, CLIENT_ORIGIN, DATABASE_URL } = require('./config');
 const localStrategy = require('./passport/local'); 
 const jwtStrategy = require('./passport/jwt'); 
 
-const loginRouter = require('./routes/login');
-const authRouter = require('./routes/auth'); 
-const slouchRouter = require('./routes/slouch');  
+const signupRouter = require('./Routes/signup');
+const loginRouter = require('./Routes/login'); 
+const slouchRouter = require('./Routes/slouch');  
+const displayRouter = require('./Routes/display'); 
 
 const app = express(); 
 mongoose.Promise = global.Promise; 
@@ -35,11 +36,12 @@ app.use(
 passport.use(localStrategy); 
 passport.use(jwtStrategy); 
 
-const jwtAuth = passport.authenticate('jwt', {session : false, failWithError: true}); 
+const jwtAuth = passport.authenticate('jwt', { session: false, failWithError: false}); 
 
-app.use('/api', authRouter); 
-app.use('/api/login', loginRouter); 
-app.use('/api', slouchRouter); 
+app.use('/api/signup', signupRouter); 
+app.use('/api/auth', loginRouter); 
+app.use('/api/slouch', jwtAuth, slouchRouter); 
+app.use('/api/display', jwtAuth, displayRouter); 
 
 //Custom Error Handler
 app.use((err, req, res, next) => { 
@@ -65,9 +67,10 @@ function runServer(port = PORT) {
 
 function dbConnect(url = DATABASE_URL) { 
   return mongoose.connect(url, { useNewUrlParser: true })
-    .then(() => { 
-      // eslint-disable-next-line no-console
-      console.log('Mongoose is connected'); 
+    .then((instance) => { 
+      const conn = instance.connections[0];
+      // eslint-disable-next-line no-console 
+      console.log(`Connected to : mongodb://${conn.host}:${conn.port}/${conn.name}`); 
     })
     .catch(err => { 
       // eslint-disable-next-line no-console
