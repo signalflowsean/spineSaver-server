@@ -16,9 +16,8 @@ const loginRouter = require('./routes/login');
 const authRouter = require('./routes/auth'); 
 const slouchRouter = require('./routes/slouch');  
 
-mongoose.Promise = global.Promise; 
-
 const app = express(); 
+mongoose.Promise = global.Promise; 
 
 app.use(bodyParser.json());
 
