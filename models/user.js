@@ -6,7 +6,8 @@ const mongoose = require('mongoose');
 const userSchema = new mongoose.Schema({ 
   fullname : { type: String, default: '', required: true}, 
   username: { type: String, require: true, unique: true},
-  password: { type: String, required: true} 
+  password: { type: String, required: true}, 
+  calibrateValue: { type: Number, default: 0}
 }); 
 
 userSchema.set('toJSON',  { 

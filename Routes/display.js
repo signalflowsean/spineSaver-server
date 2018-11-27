@@ -53,7 +53,7 @@ router.get('/:id', (req, res, next) => {
       const username = data[2].username; 
 
       improvement = (presTime/prevTime); 
-      
+      console.log(timeElapsed, slouchElapsed, improvement); 
       res.json({timeElapsed, slouchElapsed, improvement, username}); 
     })
     .catch(error => { 
