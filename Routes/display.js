@@ -10,6 +10,7 @@ const User = require('../models/user');
 
 router.get('/:id', (req, res, next) => {  
   const { id } = req.params; 
+  //console.log(id); 
   const userId = req.user.id; 
 
   if(!mongoose.Types.ObjectId.isValid(id)) { 
@@ -20,17 +21,21 @@ router.get('/:id', (req, res, next) => {
 
   let timeElapsed, slouchElapsed, improvement;  
 
-  let prevTimeMin = moment().subtract(10, 'hours')._d; 
-  let prevTimeMax = moment().subtract(8, 'hours')._d; 
+  let prevTimeMin = moment().subtract(10, 'minutes')._d; 
+  let prevTimeMax = moment().subtract(8, 'minutes')._d; 
 
-  let presTimeMin = moment().subtract(4, 'hours')._d; 
-  let presTimeMax = moment().subtract(0, 'hours')._d; 
+  let presTimeMin = moment().subtract(4, 'minutes')._d; 
+  let presTimeMax = moment().subtract(0, 'minutes')._d; 
 
-  Slouch
-    .find({ _id: id, userId})
+  User
+    .findById(id)
+    .populate('Slouch')
     .then(poseData => {  
-
+      console.log(JSON.stringify(poseData, null, 4)); 
+      //console.log(poseData.slouch); 
+      //console.log('posedata', poseData); 
       timeElapsed = toTime(poseData.length); 
+      console.log(timeElapsed); 
       slouchElapsed = getTimeSlouching(poseData);
       
       const prevTimePromise = Slouch.find( {created: {

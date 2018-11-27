@@ -7,9 +7,7 @@ const jsonParser = bodyParser.json();
 
 const User = require('../models/user'); 
 
-
 router.post('/', (req, res, next) => { 
-  console.log('body', req.body); 
   const requiredFields = ['username', 'password']; 
   const missingField = requiredFields.find(field => !(field in req.body)); 
 
@@ -88,11 +86,9 @@ router.post('/', (req, res, next) => {
         err = new Error('The username already exists'); 
         err.status = 400; 
       }
+      console.error('the error:', err); 
       next(err); 
     }); 
-
-
 }); 
-
 
 module.exports = router; 

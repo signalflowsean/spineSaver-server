@@ -11,12 +11,13 @@ const router = express.Router();
 
 router.post('/', (req, res, next) => { 
   const {slouchData} = req.body; 
-  res.json({slouchData}); 
 
   Slouch
     .create({ slouch : slouchData, created : moment() })
     .then(slouch => { 
-      res.status(201);
+      res
+        .status(201)
+        .json({slouchData: slouch}); 
     })
     .catch(error => {
       next(error); 
@@ -24,35 +25,32 @@ router.post('/', (req, res, next) => {
 }); 
 
 router.get('/calibration/:id', (req, res, next) => { 
+
   const {id} = req.params; 
 
-  User.find({_id: id})
-    .then(res => { 
-      // eslint-disable-next-line no-console
-      res.json(res); 
-      //console.log('calibrateValue', res.calibrateValue); 
+  User.findById(id)
+    .then(data => { 
+      const calibrationValue = data.calibrateValue; 
+      res.json({calibrationValue});   
     })
     .catch(err => { 
       console.error('error', err); 
     }); 
-
 }); 
-
 
 router.post('/calibration/:id', (req, res, next) => { 
   const {id} = req.params; 
-  const {calibrateValue} = req.body;  
+  const {calibrateVal} = req.body;  
 
-  User.findByIdAndUpdate({_id: id}, {calibrateValue})
-    .then(res => { 
-      console.log(res); 
+  User.findByIdAndUpdate({_id: id}, {calibrateValue: calibrateVal})
+    .then(user => { 
+      res.json({message: 'Calibration Value has been added'}); 
+      console.log(user); 
     })
     .catch(err => { 
       console.error(err); 
     }); 
 }); 
-
-
 
 
 module.exports = router; 

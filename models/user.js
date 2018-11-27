@@ -7,7 +7,8 @@ const userSchema = new mongoose.Schema({
   fullname : { type: String, default: '', required: true}, 
   username: { type: String, require: true, unique: true},
   password: { type: String, required: true}, 
-  calibrateValue: { type: Number, default: 0}
+  calibrateValue: { type: Number, default: 0}, 
+  slouch : {type : mongoose.Types.ObjectId, ref : 'Slouch'}
 }); 
 
 userSchema.set('toJSON',  { 
