@@ -9,10 +9,12 @@ const Slouch = require('../models/slouch');
 const User = require('../models/user'); 
 
 router.get('/:id', (req, res, next) => {  
+  console.log('Getting display info'); 
   const { id } = req.params; 
-  //console.log(id); 
-  const userId = req.user.id; 
-
+  console.log('id', id); 
+  //const userId = req.user.id; 
+  //TEMP FOR NOW
+  //res.json({timeElapsed: 2, slouchElapsed : 3, improvement : 21 }); 
   if(!mongoose.Types.ObjectId.isValid(id)) { 
     const err = new Error('The `id` is not valid'); 
     err.status = 400; 
@@ -29,14 +31,18 @@ router.get('/:id', (req, res, next) => {
 
   User
     .findById(id)
-    .populate('Slouch')
-    .then(poseData => {  
-      console.log(JSON.stringify(poseData, null, 4)); 
-      //console.log(poseData.slouch); 
-      //console.log('posedata', poseData); 
-      timeElapsed = toTime(poseData.length); 
-      console.log(timeElapsed); 
-      slouchElapsed = getTimeSlouching(poseData);
+    .populate('slouches')
+    .then(poseData => {
+      
+      const newSlouches = poseData.slouches.reduce((arr, slouch) => { 
+        return [...arr, ...slouch.slouch];  
+      }, [] ); 
+
+      
+      timeElapsed = toTime(newSlouches.length); 
+      console.log('time elapsed', timeElapsed); 
+      slouchElapsed = getTimeSlouching(newSlouches);
+      console.log('slouch elpased', slouchElapsed); 
       
       const prevTimePromise = Slouch.find( {created: {
         $gte: prevTimeMin,
@@ -48,20 +54,21 @@ router.get('/:id', (req, res, next) => {
         $lt: presTimeMax
       }}); 
 
-      const findUsernamePromise = User.find( {_id: id, userId} ); 
+      //const findUsernamePromise = User.find( {_id: id, userId} ); 
       
-      return Promise.all([prevTimePromise, presTimePromise, findUsernamePromise]); 
+      return Promise.all([prevTimePromise, presTimePromise]); 
     })
     .then(data => {  
       const prevTime = getTimeSlouching(data[0]); 
       const presTime = getTimeSlouching(data[1]); 
-      const username = data[2].username; 
+      //const username = data[2].username; 
 
       improvement = (presTime/prevTime); 
-      console.log(timeElapsed, slouchElapsed, improvement); 
-      res.json({timeElapsed, slouchElapsed, improvement, username}); 
+      //console.log(timeElapsed, slouchElapsed, improvement); 
+      res.json({timeElapsed, slouchElapsed, improvement}); 
     })
     .catch(error => { 
+      console.log('Error getting display data: ', error); 
       next(error); 
     }); 
 }); 
@@ -72,12 +79,13 @@ function toTime(length){
   return ((length*frameRate*sampleSize)/60000).toFixed(2); 
 }
 function getTimeSlouching (data){ 
+  //console.log(data); 
   const poseData = []; 
   const thresh = 0.5; 
   
-  data.forEach((d) => d.slouch.forEach(p => poseData.push(p))); 
-  const slouchData = poseData.filter(pose => (pose > thresh)); 
-
+  //data.forEach((d) => d.slouch.forEach(p => poseData.push(p))); 
+  const slouchData = data.filter(pose => (pose >= thresh)); 
+  //console.log('slouchslouchData', slouchData); 
   //NOT * 10 broke out of array
   const time = ((slouchData.length*50)/60000).toFixed(2); 
 

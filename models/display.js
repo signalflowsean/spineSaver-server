@@ -8,7 +8,6 @@ const displaySchema = mongoose.Schema({
   improvement : {type : Number, required : true}
 }); 
 
-
 const Display = mongoose.model('Display', displaySchema); 
 
 module.exports = Display; 

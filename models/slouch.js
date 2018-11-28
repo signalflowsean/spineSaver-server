@@ -2,7 +2,7 @@
 
 const mongoose = require('mongoose'); 
 
-const slouchSchema = mongoose.Schema({ 
+const slouchSchema = mongoose.Schema({  
   slouch: {type: [Number], required: true}, 
   created: {type: Date}
 }, {timestamps: true}); 
