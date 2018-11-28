@@ -22,8 +22,8 @@ router.get('/:id', (req, res, next) => {
 
   let timeElapsed, slouchElapsed, improvement;  
 
-  let prevTimeMin = moment().subtract(10, 'minutes')._d; 
-  let prevTimeMax = moment().subtract(8, 'minutes')._d; 
+  let prevTimeMin = moment().subtract(8, 'minutes')._d; 
+  let prevTimeMax = moment().subtract(3, 'minutes')._d; 
 
   let presTimeMin = moment().subtract(4, 'minutes')._d; 
   let presTimeMax = moment().subtract(0, 'minutes')._d; 
@@ -46,24 +46,35 @@ router.get('/:id', (req, res, next) => {
       const prevTimePromise = Slouch.find( {created: {
         $gte: prevTimeMin,
         $lt: prevTimeMax
-      }});
+      }, _id : id});
       
       const presTimePromise = Slouch.find( { created : { 
         $gte: presTimeMin, 
         $lt: presTimeMax
-      }}); 
+      }, _id : id}); 
 
       //const findUsernamePromise = User.find( {_id: id, userId} ); 
       
       return Promise.all([prevTimePromise, presTimePromise]); 
     })
-    .then(data => {  
-      const prevTime = getTimeSlouching(data[0]); 
-      const presTime = getTimeSlouching(data[1]); 
-      console.log('prevTime', prevTime, 'presTime', presTime); 
+    .then(data => {
+      const newSlouchesPrev = data[0].reduce((arr, slouch) => { 
+        return [...arr, ...slouch.slouch];  
+      }, [] ); 
+
+      const newSlouchPost = data[1].reduce((arr, slouch) => { 
+        return [...arr, ...slouch.slouch];  
+      }, [] ); 
+     
+      //console.log(data); 
+      //console.log(data[0].length, data[1].length);   
+      const prevTime = getTimeSlouching(newSlouchesPrev); 
+      const presTime = getTimeSlouching(newSlouchPost); 
+      //console.log('prevTime', prevTime, 'presTime', presTime); 
 
 
       improvement = (presTime/prevTime); 
+      console.log((improvement).toFixed(3)); 
       //console.log(timeElapsed, slouchElapsed, improvement); 
       res.json({timeElapsed, slouchElapsed, improvement}); 
     })
@@ -80,7 +91,6 @@ function toTime(length){
 }
 function getTimeSlouching (data){ 
   //console.log(data); 
-  const poseData = []; 
   const thresh = 0.02; 
   
   const slouchData = data.filter(pose => (pose >= thresh)); 
