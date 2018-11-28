@@ -13,8 +13,7 @@ router.get('/:id', (req, res, next) => {
   const { id } = req.params; 
   //console.log('id', id); 
   //const userId = req.user.id; 
-  //TEMP FOR NOW
-  //res.json({timeElapsed: 2, slouchElapsed : 3, improvement : 21 }); 
+ 
   if(!mongoose.Types.ObjectId.isValid(id)) { 
     const err = new Error('The `id` is not valid'); 
     err.status = 400; 
