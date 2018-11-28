@@ -9,9 +9,9 @@ const Slouch = require('../models/slouch');
 const User = require('../models/user'); 
 
 router.get('/:id', (req, res, next) => {  
-  console.log('Getting display info'); 
+  //console.log('Getting display info'); 
   const { id } = req.params; 
-  console.log('id', id); 
+  //console.log('id', id); 
   //const userId = req.user.id; 
   //TEMP FOR NOW
   //res.json({timeElapsed: 2, slouchElapsed : 3, improvement : 21 }); 
@@ -40,9 +40,9 @@ router.get('/:id', (req, res, next) => {
 
       
       timeElapsed = toTime(newSlouches.length); 
-      console.log('time elapsed', timeElapsed); 
+      //console.log('time elapsed', timeElapsed); 
       slouchElapsed = getTimeSlouching(newSlouches);
-      console.log('slouch elpased', slouchElapsed); 
+      //console.log('slouch elpased', slouchElapsed); 
       
       const prevTimePromise = Slouch.find( {created: {
         $gte: prevTimeMin,
@@ -61,7 +61,8 @@ router.get('/:id', (req, res, next) => {
     .then(data => {  
       const prevTime = getTimeSlouching(data[0]); 
       const presTime = getTimeSlouching(data[1]); 
-      //const username = data[2].username; 
+      console.log('prevTime', prevTime, 'presTime', presTime); 
+
 
       improvement = (presTime/prevTime); 
       //console.log(timeElapsed, slouchElapsed, improvement); 
@@ -76,18 +77,17 @@ router.get('/:id', (req, res, next) => {
 function toTime(length){ 
   const sampleSize = 10; 
   const frameRate = 50; 
-  return ((length*frameRate*sampleSize)/60000).toFixed(2); 
+  return ((length*frameRate*sampleSize)/60000).toFixed(3); 
 }
 function getTimeSlouching (data){ 
   //console.log(data); 
   const poseData = []; 
-  const thresh = 0.5; 
+  const thresh = 0.02; 
   
-  //data.forEach((d) => d.slouch.forEach(p => poseData.push(p))); 
   const slouchData = data.filter(pose => (pose >= thresh)); 
-  //console.log('slouchslouchData', slouchData); 
-  //NOT * 10 broke out of array
-  const time = ((slouchData.length*50)/60000).toFixed(2); 
+  console.log('slouchslouchData', slouchData.length); 
+
+  const time = ((slouchData.length*50)/60000).toFixed(3); 
 
   return time; 
 }
