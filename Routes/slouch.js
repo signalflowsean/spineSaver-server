@@ -40,12 +40,14 @@ router.post('/:id', (req, res, next) => {
 }); 
 
 router.get('/calibration/:id', (req, res, next) => { 
- 
+  console.log('hi'); 
   const {id} = req.params; 
   
   User.findById(id)
-    .then(data => { 
-      const calibrationValue = data.calibrateValue; 
+    .then(user => { 
+      console.log('user', user); 
+      console.log('calibVal', user.calibrateValue);
+      const calibrationValue = user.calibrateValue; 
       res.json({calibrationValue});   
     })
     .catch(err => { 

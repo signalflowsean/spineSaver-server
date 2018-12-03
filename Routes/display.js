@@ -30,7 +30,7 @@ router.get('/:id', (req, res, next) => {
     .findById(id)
     .populate('slouches')
     .then(poseData => {
-
+      // console.log(poseData); 
       const newSlouches = poseData.slouches.reduce((arr, slouch) => { 
         return [...arr, ...slouch.slouch];  
       }, [] ); 
@@ -38,19 +38,28 @@ router.get('/:id', (req, res, next) => {
       timeElapsed = toTime(newSlouches.length); 
       slouchElapsed = getTimeSlouching(newSlouches);
       
-      const prevTimePromise = Slouch.find( {created: {
+      // debug if needed
+      // mongoose.set('debug', true);
+      
+      //CHANGE QUERY
+      const prevTimePromise = User.find( {created: {
         $gte: prevTimeMin,
         $lt: prevTimeMax
       }, _id : id});
       
-      const presTimePromise = Slouch.find( { created : { 
+      const presTimePromise = User.find( { created: { 
         $gte: presTimeMin, 
         $lt: presTimeMax
       }, _id : id}); 
 
+   
       return Promise.all([prevTimePromise, presTimePromise]); 
     })
     .then(data => {
+      
+      if (data[0].length === 0 && data[1]){ 
+        // console.log('Error Arrays are empty'); 
+      }
       const newSlouchesPrev = data[0].reduce((arr, slouch) => { 
         return [...arr, ...slouch.slouch];  
       }, [] ); 
