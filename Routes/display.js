@@ -30,7 +30,6 @@ router.get('/:id', (req, res, next) => {
     .findById(id)
     .populate('slouches')
     .then(poseData => {
-      // console.log(poseData); 
       const newSlouches = poseData.slouches.reduce((arr, slouch) => { 
         return [...arr, ...slouch.slouch];  
       }, [] ); 
@@ -41,43 +40,32 @@ router.get('/:id', (req, res, next) => {
       // debug if needed
       // mongoose.set('debug', true);
       
-      //CHANGE QUERY
-      const prevTimePromise = User.find( {created: {
-        $gte: prevTimeMin,
-        $lt: prevTimeMax
-      }, _id : id});
-      
-      const presTimePromise = User.find( { created: { 
-        $gte: presTimeMin, 
-        $lt: presTimeMax
-      }, _id : id}); 
+      const prevTimeSlouch = poseData.slouches.filter(slouch => { 
+        if (slouch.created >= prevTimeMin && slouch.created < prevTimeMax){ 
+          return slouch; 
+        }
+      }); 
 
-   
-      return Promise.all([prevTimePromise, presTimePromise]); 
-    })
-    .then(data => {
-      
-      if (data[0].length === 0 && data[1]){ 
-        // console.log('Error Arrays are empty'); 
-      }
-      const newSlouchesPrev = data[0].reduce((arr, slouch) => { 
+      const presTimeSlouch = poseData.slouches.filter(slouch => { 
+        if (slouch.created >= presTimeMin && slouch.created < presTimeMax) { 
+          return slouch;
+        }
+      }); 
+
+      const newSlouchesPrev = prevTimeSlouch.reduce((arr, slouch) => { 
         return [...arr, ...slouch.slouch];  
       }, [] ); 
 
-      const newSlouchPost = data[1].reduce((arr, slouch) => { 
+      const newSlouchPost = presTimeSlouch.reduce((arr, slouch) => { 
         return [...arr, ...slouch.slouch];  
       }, [] ); 
     
       const prevTime = getTimeSlouching(newSlouchesPrev); 
       const presTime = getTimeSlouching(newSlouchPost); 
 
-      //console.log('prevTime', prevTime); 
-      //console.log('postTime', presTime); 
+      improvement = (presTime/prevTime).toFixed(3); 
 
-      //NOTE IMPROVEMENT IS NOT WORKING
-      improvement = (presTime/prevTime); 
-
-      res.json({timeElapsed, slouchElapsed, improvement: 11}); 
+      res.json({timeElapsed, slouchElapsed, improvement}); 
     })
     .catch(error => { 
       console.log('Error getting display data: ', error); 
