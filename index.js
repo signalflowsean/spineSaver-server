@@ -73,9 +73,7 @@ function dbConnect(url = DATABASE_URL) {
     })
     .catch(err => { 
       // eslint-disable-next-line no-console
-      console.error('Mongoose failed to connect');
-      // eslint-disable-next-line no-console 
-      console.error(err); 
+      console.error('Mongoose failed to connect', err);
     }); 
 }
 
