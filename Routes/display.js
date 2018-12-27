@@ -65,6 +65,10 @@ router.get('/:id', (req, res, next) => {
 
       improvement = (presTime/prevTime).toFixed(3); 
 
+      if (isNaN(improvement) || !isFinite(improvement)) { 
+        improvement = '{Not enough data}'
+      }
+
       res.json({timeElapsed, slouchElapsed, improvement}); 
     })
     .catch(error => { 
