@@ -40,7 +40,7 @@ router.post('/:id', (req, res, next) => {
 }); 
 
 router.get('/calibration/:id', (req, res, next) => { 
-  console.log('hi'); 
+  // console.log('hi'); 
   const {id} = req.params; 
   
   User.findById(id)

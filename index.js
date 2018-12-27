@@ -43,7 +43,6 @@ app.use('/api/auth', loginRouter);
 app.use('/api/slouch', jwtAuth, slouchRouter); 
 app.use('/api/display', jwtAuth, displayRouter); 
 
-//Custom Error Handler
 app.use((err, req, res, next) => { 
   if (err.status) { 
     const errBody = Object.assign({}, err, { message: err.message }); 
