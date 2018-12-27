@@ -37,7 +37,7 @@ router.get('/:id', (req, res, next) => {
       timeElapsed = toTime(newSlouches.length); 
       slouchElapsed = getTimeSlouching(newSlouches);
       
-      // debug if needed
+      // debug
       // mongoose.set('debug', true);
       
       const prevTimeSlouch = poseData.slouches.filter(slouch => { 
