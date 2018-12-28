@@ -38,7 +38,7 @@ router.get('/:id', (req, res, next) => {
       slouchElapsed = getTimeSlouching(newSlouches);
       
       // debug
-      // mongoose.set('debug', true);
+      // mongoose.set('debug', true)
       
       const prevTimeSlouch = poseData.slouches.filter(slouch => { 
         if (slouch.created >= prevTimeMin && slouch.created < prevTimeMax){ 
@@ -50,7 +50,7 @@ router.get('/:id', (req, res, next) => {
         if (slouch.created >= presTimeMin && slouch.created < presTimeMax) { 
           return slouch;
         }
-      }); 
+      }); this
 
       const newSlouchesPrev = prevTimeSlouch.reduce((arr, slouch) => { 
         return [...arr, ...slouch.slouch];  
