@@ -28,10 +28,10 @@ app.use(
   })
 ); 
 
-// app.use(
-//   morgan(process.env.NODE_ENV === 'production' ? 'common' : 'dev', { 
-//     skip : (req, res) => process.env.NODE_ENV === 'test'})
-// ); 
+app.use(
+  morgan(process.env.NODE_ENV === 'production' ? 'common' : 'dev', { 
+    skip : (req, res) => process.env.NODE_ENV === 'test'})
+); 
 
 passport.use(localStrategy); 
 passport.use(jwtStrategy); 
