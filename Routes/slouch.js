@@ -12,9 +12,9 @@ const router = express.Router();
 router.post('/', (req, res, next) => { 
 
   const { id } = req.user;
-  console.log('id', id);  
+  // console.log('id', id);  
   const {slouch} = req.body; 
-  ````
+
   let slouched; 
 
   Slouch
@@ -39,7 +39,7 @@ router.post('/', (req, res, next) => {
     }); 
 }); 
 
-router.get('/calibration/:id', (req, res, next) => { 
+router.get('/calibration', (req, res, next) => { 
 
   const {id} = req.user; 
   
@@ -55,9 +55,9 @@ router.get('/calibration/:id', (req, res, next) => {
     }); 
 }); 
 
-router.post('/calibration/:id', (req, res, next) => { 
+router.post('/calibration/', (req, res, next) => { 
   
-  const {id} = req.params; 
+  const {id} = req.user; 
   const {calibrateVal} = req.body;  
 
   console.log(`Adding calibration data to user ${id}`);

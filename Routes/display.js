@@ -8,9 +8,9 @@ const router = express.Router();
 const Slouch = require('../models/slouch'); 
 const User = require('../models/user'); 
 
-router.get('/:id', (req, res, next) => {  
+router.get('/', (req, res, next) => {  
 
-  const { id } = req.params; 
+  const { id } = req.user; 
  
   if(!mongoose.Types.ObjectId.isValid(id)) { 
     const err = new Error('The `id` is not valid'); 
