@@ -9,18 +9,18 @@ const User = require('../models/user');
 
 const router = express.Router(); 
 
-router.post('/:id', (req, res, next) => { 
+router.post('/', (req, res, next) => { 
 
-  const {id} = req.params; 
+  const { id } = req.user;
+  console.log('id', id);  
   const {slouch} = req.body; 
-
+  ````
   let slouched; 
 
   Slouch
     .create({ slouch, created : moment() })
     .then(_slouch => { 
-      //console.log(_slouch); 
-      //console.log('_slouch', _slouch); 
+
       slouched = _slouch; 
       
       return User.findByIdAndUpdate(id, 
@@ -40,8 +40,8 @@ router.post('/:id', (req, res, next) => {
 }); 
 
 router.get('/calibration/:id', (req, res, next) => { 
-  // console.log('hi'); 
-  const {id} = req.params; 
+
+  const {id} = req.user; 
   
   User.findById(id)
     .then(user => { 
